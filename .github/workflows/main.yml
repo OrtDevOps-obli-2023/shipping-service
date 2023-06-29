@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - feature/*
 
 env:
   ECR_REGISTRY: 806379772007.dkr.ecr.us-east-1.amazonaws.com
