@@ -34,15 +34,29 @@ jobs:
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ env.AWS_REGION }}
 
+      - name: Store AWS credentials
+        uses: actions/upload-artifact@v2
+        with:
+          name: aws-credentials
+          path: ${{ runner.temp }}/aws-credentials
+
   login_to_ecr:
     needs: configure_aws_credentials
     name: Login to Amazon ECR
     runs-on: ubuntu-latest
 
     steps:
+      - name: Download AWS credentials
+        uses: actions/download-artifact@v2
+        with:
+          name: aws-credentials
+          path: ${{ runner.temp }}/aws-credentials
+
       - name: Login AWS ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
+        env:
+          AWS_CONFIG_FILE: ${{ runner.temp }}/aws-credentials/config
 
   build_and_push_to_ecr:
     needs: login_to_ecr
