@@ -12,35 +12,28 @@ env:
   AWS_REGION: us-east-1
 
 jobs:
-  call-check:
+  push_to_ecr:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-  
-  call-config:
-    needs: call-check
-    name: Configure AWS Credentials
-    uses: ./.github/actions/configure_aws_credentials.yml
-    with:
-      aws-region: ${{ env.AWS_REGION }}
-    
-    secrets:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
-          
-  call-login-ecr:
-    needs: call-config
-    name: Login to Amazon ECR
-    uses: ./.github/actions/login-to-ecr
 
-  call-build-image-to-ecr:
-    needs: call-login-ecr
-    name: Build and push Docker image to ECR
-    uses: ./.github/actions/build-and-push-docker
-    with:
-      context: .
-      push: true
-      tags: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build and push Docker image to ECR
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
