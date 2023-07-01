@@ -12,15 +12,21 @@ env:
   AWS_REGION: ${{ vars.AWS_REGION }}
 
 jobs:
-  push_to_ecr:
-    name: CI Push ECR
+  check_repo:
+    name: Check Repo
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Configure AWS credentials
+  configure_aws_credentials:
+    needs: check_repo
+    name: Configure AWS credentials
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Configure AWS
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -28,7 +34,13 @@ jobs:
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Login to Amazon ECR
+  login_to_ecr:
+    needs: configure_aws_credentials
+    name: Login to Amazon ECR
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Login AWS ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
