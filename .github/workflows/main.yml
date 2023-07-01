@@ -22,7 +22,7 @@ jobs:
   call-config:
     needs: call-check
     name: Configure AWS Credentials
-    uses: ./.github/actions/configure-aws-credentials
+    uses: ./.github/actions/configure-aws-credentials/action.yml
     with:
       aws-region: ${{ env.AWS_REGION }}
     
