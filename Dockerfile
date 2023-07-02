@@ -13,6 +13,7 @@ COPY pom.xml .
 COPY src/ src/
 
 # Descargar las dependencias del proyecto y compilar la aplicación
+RUN chmod +x mvnw
 RUN ./mvnw package -DskipTests
 
 #Establecer la imagen base para la ejecución
