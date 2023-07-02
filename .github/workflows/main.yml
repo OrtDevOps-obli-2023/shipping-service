@@ -42,8 +42,34 @@ jobs:
       - name: SonarQube
         run: echo "Hola SonarQube"
 
-  buil-push-ecr:
+
+  approval:
     needs: [unit-test, code-test]
+    name: Approval
+    runs-on: ubuntu-latest
+      
+    steps:
+      - name: Request approval
+        id: approval
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+              const { data: { html_url: approvalUrl } } = await github.actions.createApprovalRequest({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                event_type: 'manual_approval',
+                reviewers: ['your-username'],
+                team_reviewers: ['your-team'],
+                payload: {
+                  message: 'Please review and approve the workflow.'
+                }
+              });
+              core.setOutput('approvalUrl', approvalUrl)
+
+
+  buil-push-ecr:
+    needs: approval
     name: Etapa ECR AWS
     runs-on: ubuntu-latest
 
@@ -53,7 +79,7 @@ jobs:
         with:
           name: checkout-repo
           path: ${{ github.workspace }}
-          
+
       - name: Configure AWS
         uses: aws-actions/configure-aws-credentials@v1
         with:
