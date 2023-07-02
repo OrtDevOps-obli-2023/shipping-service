@@ -7,9 +7,9 @@ on:
       - feature/*
 
 env:
-  ECR_REGISTRY: ${{ vars.ECR_REGISTRY }}
-  ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
-  AWS_REGION: ${{ vars.AWS_REGION }}
+  ECR_REGISTRY: "${{ vars.ECR_REGISTRY }}"
+  ECR_REPOSITORY: "${{ vars.ECR_REPOSITORY }}"
+  AWS_REGION: "${{ vars.AWS_REGION }}"
 
 jobs:
   check-repo:
