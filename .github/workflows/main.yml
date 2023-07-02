@@ -50,22 +50,21 @@ jobs:
       
     steps:
       - name: Request approval
-        id: approval
-        uses: actions/github-script@v4
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { owner, repo } = context.repo;
-            const pull_number = context.payload.pull_request.number;
-            
-            const response = await octokit.pulls.createReview({
-              owner,
-              repo,
-              pull_number,
-              event: 'APPROVE'
-            });
-      
-            console.log(response);
+        run: echo "Simular approve"
+        # id: approval
+        # uses: actions/github-script@v4
+        # with:
+        #   github-token: ${{ secrets.GITHUB_TOKEN }}
+        #   script: |
+        #     const { owner, repo } = context.repo;
+        #     const pull_number = context.payload.pull_request.number;
+        #     const response = await octokit.pulls.createReview({
+        #       owner,
+        #       repo,
+        #       pull_number,
+        #       event: 'APPROVE'
+        #     });
+        #     console.log(response);
 
   buil-push-ecr:
     needs: approval
