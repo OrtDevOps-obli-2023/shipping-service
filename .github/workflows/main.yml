@@ -20,6 +20,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Create artifact repo
+        uses: actions/upload-artifact@v2
+        with:
+          name: checkout-repo
+          path: ${{ github.workspace }}
+
   unit-test:
     needs: check-repo
     name: Pruebas Unitest
@@ -42,9 +48,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: checkout-repo
+          path: ${{ github.workspace }}
+          
       - name: Configure AWS
         uses: aws-actions/configure-aws-credentials@v1
         with:
