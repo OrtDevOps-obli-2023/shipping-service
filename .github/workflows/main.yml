@@ -51,22 +51,21 @@ jobs:
     steps:
       - name: Request approval
         id: approval
-        uses: actions/github-script@v6
+        uses: actions/github-script@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-              const { data: { html_url: approvalUrl } } = await github.actions.createApprovalRequest({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                event_type: 'manual_approval',
-                reviewers: ['your-username'],
-                team_reviewers: ['your-team'],
-                payload: {
-                  message: 'Please review and approve the workflow.'
-                }
-              });
-              core.setOutput('approvalUrl', approvalUrl)
-
+            const { owner, repo } = context.repo;
+            const pull_number = context.payload.pull_request.number;
+            
+            const response = await octokit.pulls.createReview({
+              owner,
+              repo,
+              pull_number,
+              event: 'APPROVE'
+            });
+      
+            console.log(response);
 
   buil-push-ecr:
     needs: approval
