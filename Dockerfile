@@ -26,4 +26,8 @@ WORKDIR /app
 COPY --from=build /app/target/shipping-service-example-0.0.1-SNAPSHOT.jar .
 
 # Establecer el comando de inicio de la aplicación
-CMD ["java", "-jar", "shipping-service-example-0.0.1-SNAPSHOT.jar"]
+
+# --server.port=$SERVER_PORT 
+
+CMD java -jar shipping-service-example-0.0.1-SNAPSHOT.jar
+
